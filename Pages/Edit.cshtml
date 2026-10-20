@@ -1,0 +1,7 @@
+@page "{id:int}"
+@model MeineErsteWebApp.Pages.EditModel
+@{ViewData["Title"]="Aufgabe bearbeiten";}
+<div class="container py-4"><h1>Aufgabe bearbeiten</h1><form method="post"><input type="hidden" asp-for="Todo.Id" /><input type="hidden" asp-for="Todo.CreatedAt" />
+<div class="mb-3"><label asp-for="Todo.Title" class="form-label">Titel</label><input asp-for="Todo.Title" class="form-control" /></div><div class="mb-3"><label asp-for="Todo.Description" class="form-label">Beschreibung</label><textarea asp-for="Todo.Description" class="form-control"></textarea></div>
+<div class="mb-3"><label asp-for="Todo.DueDate" class="form-label">Fällig am</label><input asp-for="Todo.DueDate" type="date" class="form-control" /></div><div class="mb-3"><label asp-for="Todo.Priority" class="form-label">Priorität</label><select asp-for="Todo.Priority" class="form-select"><option value="1">Niedrig</option><option value="2">Mittel</option><option value="3">Hoch</option></select></div>
+<div class="mb-3"><label asp-for="Todo.CategoryId" class="form-label">Kategorie</label><select asp-for="Todo.CategoryId" class="form-select"><option value="">Keine</option>@foreach(var c in Model.Categories){<option value="@c.Id">@c.Name</option>}</select></div><button class="btn btn-primary">Speichern</button> <a asp-page="/Index" class="btn btn-secondary">Abbrechen</a></form></div>

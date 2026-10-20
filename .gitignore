@@ -1,0 +1,22 @@
+﻿# Build-Ausgaben
+bin/
+obj/
+
+# Lokale Datenbanken
+*.db
+*.db-shm
+*.db-wal
+
+# Lokale Einstellungen und Geheimnisse
+appsettings.Development.json
+secrets.json
+
+# IDE und Benutzerdateien
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Betriebssystem
+.DS_Store
+Thumbs.db
