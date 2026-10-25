@@ -5,7 +5,7 @@
 }
 <div class="container py-4">
 <h1 class="mb-3">Meine Aufgaben</h1>
-<div class="card mb-4"><div class="card-header">Neue Aufgabe</div><div class="card-body">
+<div class="card mb-4"><div class="card-header h5 mb-0">Neue Aufgabe</div><div class="card-body">
 <form method="post" asp-page-handler="Add" class="row g-3">
 <div class="col-md-4"><label asp-for="NewTodo.Title" class="form-label">Titel</label><input asp-for="NewTodo.Title" class="form-control" required maxlength="120" /></div>
 <div class="col-md-4"><label asp-for="NewTodo.Description" class="form-label">Beschreibung</label><input asp-for="NewTodo.Description" class="form-control" maxlength="1000" /></div>
@@ -13,13 +13,82 @@
 <div class="col-md-2"><label asp-for="NewTodo.Priority" class="form-label">Priorität</label><select asp-for="NewTodo.Priority" class="form-select"><option value="1">Niedrig</option><option value="2" selected>Mittel</option><option value="3">Hoch</option></select></div>
 <div class="col-md-3"><label asp-for="NewTodo.CategoryId" class="form-label">Kategorie</label><select asp-for="NewTodo.CategoryId" class="form-select"><option value="">Keine</option>@foreach(var c in Model.Categories){<option value="@c.Id">@c.Name</option>}</select></div>
 <div class="col-12"><button class="btn btn-primary">Aufgabe anlegen</button></div></form></div></div>
+
 <form method="get" class="row g-2 mb-3 align-items-end">
-<div class="col-auto"><label class="form-label">Status</label><select name="Status" class="form-select"><option value="offen" selected="@(Model.Status=="offen")">Offen</option><option value="erledigt" selected="@(Model.Status=="erledigt")">Erledigt</option><option value="alle" selected="@(Model.Status=="alle")">Alle</option></select></div>
-<div class="col-auto"><label class="form-label">Priorität</label><select name="PriorityFilter" class="form-select"><option value="">Alle</option>@for(int i=1;i<=3;i++){<option value="@i" selected="@(Model.PriorityFilter==i)">@i</option>}</select></div>
-<div class="col-auto"><label class="form-label">Kategorie</label><select name="CategoryFilter" class="form-select"><option value="">Alle</option>@foreach(var c in Model.Categories){<option value="@c.Id" selected="@(Model.CategoryFilter==c.Id)">@c.Name</option>}</select></div>
-<div class="col-auto"><label class="form-label">Sortierung</label><select name="Sort" class="form-select"><option value="faelligkeit" selected="@(Model.Sort=="faelligkeit")">Fälligkeit</option><option value="prioritaet" selected="@(Model.Sort=="prioritaet")">Priorität</option></select></div><div class="col-auto"><button class="btn btn-outline-secondary">Anwenden</button></div></form>
-@if(Model.Todos.Count==0){<p class="text-muted">Keine passenden Aufgaben gefunden.</p>}
-@foreach(var todo in Model.Todos){<div class="card mb-2 @(todo.Done?"border-success":"")"><div class="card-body d-flex justify-content-between align-items-center"><div>
-<h5 class="mb-1 @(todo.Done?"text-decoration-line-through text-muted":"")">@todo.Title</h5><div>@todo.Description</div><small class="text-muted">Priorität: @todo.Priority · Fällig: @(todo.DueDate?.ToString("dd.MM.yyyy")??"–") · @(todo.CategoryName??"Ohne Kategorie") · Erstellt: @todo.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
-</div><div class="d-flex gap-2"><form method="post" asp-page-handler="Toggle" asp-route-id="@todo.Id"><button class="btn btn-sm @(todo.Done?"btn-outline-secondary":"btn-success")">@(todo.Done?"Wieder öffnen":"Erledigt")</button></form><a class="btn btn-sm btn-outline-primary" asp-page="/Edit" asp-route-id="@todo.Id">Bearbeiten</a><a class="btn btn-sm btn-outline-danger" asp-page="/Delete" asp-route-id="@todo.Id">Löschen</a></div></div></div>}
-</div>
+    <div class="col-auto">
+        <label for="Status" class="form-label">Status</label>
+        <select id="Status" name="Status" class="form-select">
+            <option value="offen" selected="@(Model.Status == "offen")">Offen</option>
+            <option value="erledigt" selected="@(Model.Status == "erledigt")">Erledigt</option>
+            <option value="alle" selected="@(Model.Status == "alle")">Alle</option>
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <label for="PriorityFilter" class="form-label">Priorität</label>
+        <select id="PriorityFilter" name="PriorityFilter" class="form-select">
+            <option value="">Alle</option>
+            @for (int i = 1; i <= 3; i++)
+            {
+                <option value="@i" selected="@(Model.PriorityFilter == i)">@i</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <label for="CategoryFilter" class="form-label">Kategorie</label>
+        <select id="CategoryFilter" name="CategoryFilter" class="form-select">
+            <option value="">Alle</option>
+            @foreach (var c in Model.Categories)
+            {
+                <option value="@c.Id" selected="@(Model.CategoryFilter == c.Id)">@c.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <label for="Sort" class="form-label">Sortierung</label>
+        <select id="Sort" name="Sort" class="form-select">
+            <option value="faelligkeit" selected="@(Model.Sort == "faelligkeit")">Fälligkeit</option>
+            <option value="prioritaet" selected="@(Model.Sort == "prioritaet")">Priorität</option>
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-secondary">Anwenden</button>
+    </div>
+</form>
+@if (Model.Todos.Count == 0)
+{
+    <p class="text-muted">Keine passenden Aufgaben gefunden.</p>
+}
+
+@foreach (var todo in Model.Todos)
+{
+    <div class="card mb-2 @(todo.Done ? "border-success" : "")">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="h5 mb-1 @(todo.Done ? "text-decoration-line-through text-muted" : "")">
+                    @todo.Title
+                </h2>
+                <div>@todo.Description</div>
+                <small class="text-muted">
+                    Priorität: @todo.Priority ·
+                    Fällig: @(todo.DueDate?.ToString("dd.MM.yyyy") ?? "–") ·
+                    @(todo.CategoryName ?? "Ohne Kategorie") ·
+                    Erstellt: @todo.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                </small>
+            </div>
+
+            <div class="d-flex gap-2">
+                <form method="post" asp-page-handler="Toggle" asp-route-id="@todo.Id">
+                    <button type="submit" class="btn btn-sm @(todo.Done ? "btn-outline-secondary" : "btn-success")">
+                        @(todo.Done ? "Wieder öffnen" : "Erledigt")
+                    </button>
+                </form>
+                <a class="btn btn-sm btn-outline-primary" asp-page="/Edit" asp-route-id="@todo.Id">Bearbeiten</a>
+                <a class="btn btn-sm btn-outline-danger" asp-page="/Delete" asp-route-id="@todo.Id">Löschen</a>
+            </div>
+        </div>
+    </div>
+}
